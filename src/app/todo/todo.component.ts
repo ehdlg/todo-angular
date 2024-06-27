@@ -8,9 +8,9 @@ import { TodoFormComponent } from '../todo-form/todo-form.component';
   imports: [TodoItemComponent, TodoFormComponent],
   template: `
     @for(todo of todos; track todo.id){
-    <app-todo-item [todo]="todo" />
+    <app-todo-item [todo]="todo" (removeEmitter)="removeTodo($event)" />
     }
-    <app-todo-form />
+    <app-todo-form (todoEmitter)="addTodo($event)" />
   `,
   styles: ``,
 })
@@ -18,15 +18,24 @@ export class TodoComponent {
   todos: TodoType[] = [
     {
       title: 'First todo!',
-      id: 1,
+      id: crypto.randomUUID(),
     },
     {
       title: 'Another todo!',
-      id: 2,
+      id: crypto.randomUUID(),
     },
   ];
 
-  addTodo(newTodo: TodoType) {
-    this.todos.push(newTodo);
+  addTodo(title: TodoType['title']) {
+    this.todos.push({
+      title,
+      id: crypto.randomUUID(),
+    });
+  }
+
+  removeTodo(id: TodoType['id']) {
+    this.todos = this.todos.filter((todo) => {
+      return todo.id !== id;
+    });
   }
 }
